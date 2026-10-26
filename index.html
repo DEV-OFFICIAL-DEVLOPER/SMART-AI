@@ -40,6 +40,43 @@
   const sendButton = document.getElementById("send");
   let busy = false;
   let chatId = 0;
+const CHAT_HISTORY_KEY = "smart_ai_chat_history";
+
+function saveChatHistory() {
+  const history = JSON.parse(
+    localStorage.getItem(CHAT_HISTORY_KEY) || "[]"
+  );
+  localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
+}
+
+function loadChatHistory() {
+  
+const CHAT_HISTORY_KEY = "smart_ai_chat_history";
+
+function saveChatHistory() {
+  const history = loadChatHistory();
+  const chat = history.find(item => item.id === chatId);
+
+  if (chat) {
+    chat.updatedAt = Date.now();
+  } else {
+    history.push({
+      id: chatId,
+      updatedAt: Date.now(),
+      messages: []
+    });
+  }
+
+  localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
+}
+
+function loadChatHistory() {
+  try {
+    return JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
 
   function addMessage(role, text, isError = false) {
     const row = document.createElement("div");
@@ -52,6 +89,19 @@
     bubble.textContent = text;
     row.append(avatar, bubble);
     conversation.appendChild(row);
+    if (role === "user" || role === "assistant") {
+  const history = loadChatHistory();
+  let chat = history.find(item => item.id === chatId);
+
+  if (!chat) {
+    chat = { id: chatId, updatedAt: Date.now(), messages: [] };
+    history.push(chat);
+  }
+
+  chat.messages.push({ role, text });
+  chat.updatedAt = Date.now();
+  localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
+}
     messages.scrollTop = messages.scrollHeight;
     return { row, bubble };
   }
@@ -61,6 +111,7 @@
     if (!text || busy) return;
     document.getElementById("welcome")?.remove();
     addMessage("user", text);
+    saveChatHistory();
     input.value = "";
     input.style.height = "auto";
     const answer = addMessage("assistant", "Thinking...");
@@ -75,7 +126,28 @@
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Request failed");
-      if (currentChat === chatId) answer.bubble.textContent = data.reply || "No response received.";
+      if (currentChat === chatId) {
+  answer.bubble.textContent = data.reply || "No response received.";
+
+  const history = loadChatHistory();
+  const chat = history.find(item => item.id === chatId);
+
+  if (chat) {
+    const lastMessage = chat.messages[chat.messages.length - 1];
+
+    if (lastMessage && lastMessage.role === "assistant" && lastMessage.text === "Thinking...") {
+      lastMessage.text = answer.bubble.textContent;
+    } else {
+      chat.messages.push({
+        role: "assistant",
+        text: answer.bubble.textContent
+      });
+    }
+
+    chat.updatedAt = Date.now();
+    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
+  }
+}
     } catch (error) {
       console.error(error);
       if (currentChat === chatId) {
