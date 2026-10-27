@@ -74,6 +74,10 @@
   <aside class="sidebar" id="sidebar">
     <div class="brand"><div class="logo">✦</div> SMART AI</div>
     <button class="new-chat" id="newChat">＋ &nbsp; New chat</button>
+    
+<div class="side-caption">Recent chats</div>
+<div id="chatHistoryList"></div>
+
     <div>
       <div class="side-caption">Your workspace</div>
       <p class="side-note">Ask questions, brainstorm ideas, write stories, and learn something new.</p>
@@ -132,6 +136,7 @@
 
   function loadChatHistory() {
     try {
+      
       const history = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || "[]");
       return Array.isArray(history) ? history : [];
     } catch (error) {
@@ -139,6 +144,42 @@
       return [];
     }
   }
+  
+function renderChatHistoryList() {
+  const list = document.getElementById("chatHistoryList");
+  if (!list) return;
+
+  const history = loadChatHistory()
+    .slice()
+    .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+  list.replaceChildren();
+
+  if (history.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "side-note";
+    empty.textContent = "No previous chats yet";
+    list.appendChild(empty);
+    return;
+  }
+
+  history.forEach((chat) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "history-chat";
+    button.textContent =
+      chat.messages?.find((message) => message.role === "user")?.text
+        ?.slice(0, 28) || "New chat";
+
+    button.title = button.textContent;
+    button.addEventListener("click", () => {
+      openSavedChat(chat.id);
+    });
+
+    list.appendChild(button);
+  });
+}
+
 
   function createChatId() {
     return String(Date.now()) + "-" + Math.random().toString(36).slice(2, 8);
@@ -167,6 +208,7 @@
     chat.messages.push({ role, text });
     chat.updatedAt = Date.now();
     localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
+    renderChatHistoryList();
   }
 
   function addMessage(role, text, isError = false, saveToHistory = true) {
@@ -266,6 +308,21 @@
       }
     });
   }
+  
+function openSavedChat(id) {
+  const history = loadChatHistory();
+  const chat = history.find(item => item.id === id);
+
+  if (!chat) return;
+
+  chatId = id;
+  localStorage.setItem(CURRENT_CHAT_KEY, chatId);
+
+  messages.replaceChildren();
+  restoreChatHistory();
+  renderChatHistoryList();
+}
+
 
   function attachPromptListeners() {
     document.querySelectorAll("[data-prompt]").forEach(button => {
@@ -305,6 +362,7 @@
   });
 
   restoreChatHistory();
+  renderChatHistoryList();
 </script>
 </body>
 </html>
