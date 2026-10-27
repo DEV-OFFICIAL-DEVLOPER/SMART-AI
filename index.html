@@ -309,7 +309,9 @@ function renderChatHistoryList() {
     });
   }
   
-function openSavedChat(id) {
+
+
+  function attachPromptListeners() {function openSavedChat(id) {
   const history = loadChatHistory();
   const chat = history.find(item => item.id === id);
 
@@ -318,13 +320,11 @@ function openSavedChat(id) {
   chatId = id;
   localStorage.setItem(CURRENT_CHAT_KEY, chatId);
 
-  messages.replaceChildren();
+  conversation.replaceChildren();
   restoreChatHistory();
   renderChatHistoryList();
 }
 
-
-  function attachPromptListeners() {
     document.querySelectorAll("[data-prompt]").forEach(button => {
       button.addEventListener("click", () => sendMessage(button.dataset.prompt));
     });
