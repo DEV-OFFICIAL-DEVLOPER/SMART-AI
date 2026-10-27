@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SMART AI Signup Test</title>
+</head>
+<body>
+  <h2>SMART AI Signup Test</h2>
+  <button onclick="testSignup()">Test Signup</button>
+  <p id="result">Click the button to test.</p>
+
+  <script>
+    async function testSignup() {
+      const result = document.getElementById("result");
+      result.textContent = "Testing...";
+
+      try {
+        const response = await fetch(
+          "https://smart-ai-backend.umeshsharma15775.workers.dev/auth/signup",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              email: "smartaitest123@example.com",
+              password: "TestPass123!"
+            })
+          }
+        );
+
+        const data = await response.json();
+        result.textContent =
+          "Status: " + response.status +
+          " | Result: " + JSON.stringify(data);
+      } catch (error) {
+        result.textContent = "Error: " + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
