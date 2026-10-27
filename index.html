@@ -430,9 +430,69 @@ $("memoryBtn").onclick=()=>{
 };
 
 $("accountBtn").onclick=()=>{
-  $("authMessage").textContent="Real Login / Sign Up ke liye secure backend aur database zaroori hai. Is form ko abhi account banane ke liye use mat karo.";
+  $("modalTitle").textContent="Login / Sign Up";
+  $("authMessage").textContent="";
   $("modal").classList.remove("hidden");
 };
+
+$("closeModal").onclick=()=>{
+  $("modal").classList.add("hidden");
+};
+
+async function authenticate(path){
+  const email=$("email").value.trim();
+  const password=$("password").value;
+  const message=$("authMessage");
+
+  if(!email || !password){
+    message.textContent="Please enter your email and password.";
+    return;
+  }
+
+  if(password.length < 8){
+    message.textContent="Password must be at least 8 characters.";
+    return;
+  }
+
+  message.textContent="Please wait...";
+
+  $("loginBtn").disabled=true;
+  $("signupBtn").disabled=true;
+
+  try{
+    const response=await fetch(API_URL+path,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({email,password})
+    });
+
+    const data=await response.json();
+
+    if(!response.ok){
+      message.textContent=data.error || data.message || "Request failed. Please try again.";
+      return;
+    }
+
+    if(path==="/auth/login"){
+      if(data.token){
+        sessionStorage.setItem("smart_ai_session_token",data.token);
+      }
+      message.textContent="Login successful!";
+    }else{
+      message.textContent=data.message || "Account created successfully! You can now log in.";
+    }
+  }catch(error){
+    message.textContent="Connection error. Please try again.";
+  }finally{
+    $("loginBtn").disabled=false;
+    $("signupBtn").disabled=false;
+  }
+}
+
+$("loginBtn").onclick=()=>authenticate("/auth/login");
+$("signupBtn").onclick=()=>authenticate("/auth/signup");
+
+
 
 $("closeModal").onclick=()=>$("modal").classList.add("hidden");
 $("loginBtn").onclick=()=>{
