@@ -161,6 +161,20 @@ function loadChatHistory() {
     }
   }
 
+  function restoreChatHistory() {
+  const history = loadChatHistory();
+  const chat = history.find(item => item.id === chatId);
+
+  if (!chat || !chat.messages.length) return;
+
+  document.getElementById("welcome")?.remove();
+
+  chat.messages.forEach(message => {
+    addMessage(message.role, message.text);
+  });
+}
+
+restoreChatHistory();
   document.getElementById("chatForm").addEventListener("submit", (event) => {
     event.preventDefault();
     sendMessage();
