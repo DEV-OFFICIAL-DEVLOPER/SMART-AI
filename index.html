@@ -489,8 +489,50 @@ $("speakBtn").onclick=()=>{
   speakText(last.text);
 };
 
-$("imageGenBtn").onclick=()=>{
-  alert("AI Image Generator ke liye Cloudflare Worker mein image-generation model connect karna hoga. Sirf GitHub code se image generate nahi hogi.");
+$("imageGenBtn").onclick=async()=>{
+  const promptText=$("prompt").value.trim();
+  if(!promptText){
+    alert("Pehle image ke liye prompt likho, jaise: A cute robot in a garden.");
+    $("prompt").focus();
+    return;
+  }
+  if(promptText.length>500){
+    alert("Image prompt 500 characters se chhota rakho.");
+    return;
+  }
+
+  const button=$("imageGenBtn");
+  button.disabled=true;
+  $("sendBtn").disabled=true;
+  $("status").textContent="Generating image…";
+  $("prompt").value="";
+  addMessage("user","🎨 Generate image: "+promptText);
+
+  try{
+    const response=await fetch(API_URL.replace(/\/+$/,"")+"/image",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({prompt:promptText})
+    });
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.error||"Image request failed");
+    if(typeof data.image!=="string"||!data.image.trim()){
+      throw new Error("Worker ne image return nahi ki. Backend response check karo.");
+    }
+    // Cloudflare FLUX usually returns base64 image data.
+    const imageSrc=data.image.startsWith("data:image/")
+      ? data.image
+      : "data:image/png;base64,"+data.image;
+    addMessage("assistant","Ye rahi tumhari generated image:",imageSrc);
+    $("status").textContent="Ready";
+  }catch(error){
+    addMessage("assistant","Image generate nahi hui: "+error.message);
+    $("status").textContent="Image generation error";
+  }finally{
+    button.disabled=false;
+    $("sendBtn").disabled=false;
+    $("prompt").focus();
+  }
 };
 
 $("memoryBtn").onclick=()=>{
