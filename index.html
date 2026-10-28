@@ -138,7 +138,7 @@ textarea{resize:vertical;min-height:55px;max-height:180px}
 <div id="modal" class="modal hidden">
   <div class="modal-card">
     <h2 id="modalTitle">Login / Sign Up</h2>
-    <div class="muted">Account creation needs a secure backend. This form will not create a real account by itself.</div>
+    <div class="muted">Create an account or log in to SMART AI.</div>
     <input id="email" type="email" placeholder="Email address" autocomplete="email">
     <input id="password" type="password" placeholder="Password" autocomplete="current-password">
     <div class="actions">
@@ -492,9 +492,7 @@ async function authenticate(path){
 $("loginBtn").onclick=()=>authenticate("/auth/login");
 $("signupBtn").onclick=()=>authenticate("/auth/signup");
 
-
-
-$("closeModal").
+ 
 
 $("exportBtn").onclick=()=>{
   const c=currentChat();
