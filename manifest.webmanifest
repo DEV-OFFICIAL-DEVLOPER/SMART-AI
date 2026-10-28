@@ -1,0 +1,21 @@
+
+{
+  "id": "./",
+  "name": "SMART AI",
+  "short_name": "SMART AI",
+  "description": "SMART AI - Your personal AI assistant for chat, coding help and creative ideas.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#101116",
+  "theme_color": "#101116",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
