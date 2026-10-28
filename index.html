@@ -120,8 +120,26 @@ textarea{resize:vertical;min-height:55px;max-height:180px}
           <span id="previewName"></span>
           <button id="removeImage">Remove</button>
         </div>
+        
+<div id="alarmPanel" class="hidden">
+  <h3>⏰ SMART AI Alarm</h3>
+  <label for="alarmTime">Alarm date and time</label>
+  <input id="alarmTime" type="datetime-local">
+
+  <label for="alarmMessage">Alarm message</label>
+  <input id="alarmMessage" type="text"
+         value="Uth jao!" maxlength="200">
+
+  <button id="saveAlarmBtn" class="primary">
+    Save Alarm
+  </button>
+
+  <p id="alarmStatus" aria-live="polite"></p>
+</div>
+
         <textarea id="prompt" placeholder="Message SMART AI... Enter to send, Shift+Enter for new line"></textarea>
         <div class="tools">
+          <button id="alarmBtn">⏰ Alarm</button>
           <button id="uploadBtn">🖼️ Upload image</button>
           <input type="file" id="imageFile" accept="image/*" class="hidden">
           <button id="voiceBtn">🎙️ Voice input</button>
@@ -330,6 +348,65 @@ $("themeBtn").onclick=()=>{
 $("newChat").onclick=newChat;
 $("menuBtn").onclick=()=>$("sidebar").classList.toggle("open");
 $("sendBtn").onclick=sendMessage;
+  // SMART AI Alarm panel open/close
+$("alarmBtn").onclick=()=>{
+  $("alarmPanel").classList.toggle("hidden");
+  $("alarmStatus").textContent="";
+};
+  
+$("saveAlarmBtn").onclick=async()=>{
+  const rawTime=$("alarmTime").value;
+  const message=$("alarmMessage").value.trim()||"Uth jao!";
+
+  if(!rawTime){
+    $("alarmStatus").textContent="Pehle alarm ka date aur time select karo.";
+    return;
+  }
+
+  const alarmTime=new Date(rawTime).getTime();
+
+  if(!Number.isFinite(alarmTime)||alarmTime<=Date.now()){
+    $("alarmStatus").textContent="Future ka date aur time select karo.";
+    return;
+  }
+
+  const token=sessionStorage.getItem("smart_ai_session_token");
+
+  if(!token){
+    $("alarmStatus").textContent="Pehle Login karo, phir alarm save karna.";
+    return;
+  }
+
+  $("saveAlarmBtn").disabled=true;
+  $("alarmStatus").textContent="Alarm save ho raha hai...";
+
+  try{
+    const response=await fetch(API_URL.replace(/\/+$/,"")+"/alarms/create",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":"Bearer "+token
+      },
+      body:JSON.stringify({
+        alarm_time:Math.floor(alarmTime/1000),
+        message:message
+      })
+    });
+
+    const data=await response.json();
+
+    if(!response.ok){
+      throw new Error(data.error||"Alarm save nahi hua.");
+    }
+
+    $("alarmStatus").textContent="Alarm save ho gaya! ⏰";
+  }catch(error){
+    $("alarmStatus").textContent="Error: "+error.message;
+  }finally{
+    $("saveAlarmBtn").disabled=false;
+  }
+};
+
 
 $("prompt").addEventListener("keydown",e=>{
   if(e.key==="Enter"&&!e.shiftKey){
