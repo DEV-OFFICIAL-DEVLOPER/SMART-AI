@@ -481,6 +481,8 @@ $("imageFile").onchange=async e=>{
     reader.readAsDataURL(f);
   });
   selectedImage={name:f.name,data};
+  console.log("Image data:", data?.slice(0, 50));
+console.log("Image data length:", data?.length);
   showPreview();
   e.target.value="";
 };
