@@ -336,10 +336,16 @@ async function sendMessage(){
   const text=$("prompt").value.trim();
   if(!text&&!selectedImage)return;
 
-  if(selectedImage){
-    alert("Image upload abhi sirf preview ke liye hai. AI image analysis ke liye Cloudflare Worker mein vision support add karna hoga.");
-    if(!text)return;
+ 
+if (selectedImage) {
+  const imageData = selectedImage;
+
+  if (!text.trim()) {
+    text = "Please describe this image.";
   }
+
+  // Image ko neeche API request mein bhejna zaroori hai.
+}
 
   $("prompt").value="";
   addMessage("user",text,selectedImage?.data||null);
@@ -352,7 +358,10 @@ async function sendMessage(){
     const response=await fetch(API_URL,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({message:text})
+     body:JSON.stringify({
+  message: text,
+  image: selectedImage || null
+})
     });
 
     const data=await response.json();
