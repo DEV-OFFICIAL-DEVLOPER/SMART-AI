@@ -333,16 +333,16 @@ function showPreview(){
 }
 
 async function sendMessage(){
-  const text=$("prompt").value.trim();
+ let text = $("prompt").value.trim();
   if(!text&&!selectedImage)return;
 
  
 if (selectedImage) {
   const imageData = selectedImage;
 
-  if (!text.trim()) {
-    text = "Please describe this image.";
-  }
+ if (!text.trim()) {
+  text = "Please describe this image.";
+}
 
   // Image ko neeche API request mein bhejna zaroori hai.
 }
