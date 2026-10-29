@@ -223,14 +223,24 @@ function currentChat(){
   return chats.find(c=>c.id===currentId);
 }
 
+
 function saveChats(){
-  try{
-    localStorage.setItem(HISTORY_KEY,JSON.stringify(chats.slice(0,50)));
-  }catch(e){
-    alert("Chat history save nahi ho paayi. Browser storage full ho sakti hai.");
+  try {
+    localStorage.setItem(
+      HISTORY_KEY,
+      JSON.stringify(chats.slice(0, 50))
+    );
+  } catch (e) {
+    console.error("Chat history save error:", e);
+
+    alert(
+      "Chat history save nahi ho paayi. Browser storage clear karne ki zaroorat ho sakti hai. Console mein error check karo."
+    );
   }
+
   renderHistory();
 }
+
 
 function newChat(){
   const c={id:makeId(),title:"New chat",messages:[],created:Date.now()};
