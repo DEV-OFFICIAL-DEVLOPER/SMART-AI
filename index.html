@@ -684,5 +684,182 @@ if(!chats.length){
   renderMessages();
 }
 </script>
+
+<!-- SMART AI FREE PHOTO EDITOR -->
+<section id="photo-editor" style="max-width:800px;margin:30px auto;padding:20px;background:#171923;color:white;border-radius:16px;font-family:Arial,sans-serif;">
+  <h2>🎨 SMART AI Photo Editor</h2>
+  <p>Upload your photo, edit it, and download it for free.</p>
+
+  <input id="photoInput" type="file" accept="image/*"
+    style="display:block;margin:16px 0;max-width:100%;">
+
+  <canvas id="photoCanvas"
+    style="display:block;width:100%;height:auto;max-height:500px;object-fit:contain;background:#0d0f16;border-radius:10px;">
+  </canvas>
+
+  <div style="margin-top:18px;">
+    <label for="photoBrightness">Brightness</label>
+    <input id="photoBrightness" type="range" min="50" max="150" value="100"
+      style="display:block;width:100%;margin:10px 0 18px;">
+
+    <label for="photoContrast">Contrast</label>
+    <input id="photoContrast" type="range" min="50" max="150" value="100"
+      style="display:block;width:100%;margin:10px 0 18px;">
+
+    <label for="photoFilter">Photo filter</label>
+    <select id="photoFilter" style="display:block;width:100%;padding:10px;margin:10px 0 18px;">
+      <option value="none">Original</option>
+      <option value="grayscale(100%)">Black &amp; White</option>
+      <option value="sepia(100%)">Sepia</option>
+      <option value="saturate(160%)">Vivid Colors</option>
+    </select>
+  </div>
+
+  <button id="photoRotate" type="button"
+    style="padding:11px 16px;margin:4px;border:0;border-radius:8px;cursor:pointer;">
+    ↻ Rotate
+  </button>
+
+  <button id="photoReset" type="button"
+    style="padding:11px 16px;margin:4px;border:0;border-radius:8px;cursor:pointer;">
+    Reset
+  </button>
+
+  <button id="photoDownload" type="button"
+    style="padding:11px 16px;margin:4px;background:#7c5cff;color:white;border:0;border-radius:8px;cursor:pointer;">
+    Download Photo
+  </button>
+
+  <p id="photoStatus" role="status">Choose a photo to begin editing.</p>
+</section>
+
+<script>
+(() => {
+  const input = document.getElementById("photoInput");
+  const canvas = document.getElementById("photoCanvas");
+  const ctx = canvas.getContext("2d");
+  const brightness = document.getElementById("photoBrightness");
+  const contrast = document.getElementById("photoContrast");
+  const filter = document.getElementById("photoFilter");
+  const status = document.getElementById("photoStatus");
+
+  let originalImage = null;
+  let rotation = 0;
+
+  function drawPhoto() {
+    if (!originalImage) return;
+
+    const sideways = Math.abs(rotation % 180) === 90;
+    canvas.width = sideways ? originalImage.height : originalImage.width;
+    canvas.height = sideways ? originalImage.width : originalImage.height;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate(rotation * Math.PI / 180);
+    ctx.filter =
+      `brightness(${brightness.value}%) contrast(${contrast.value}%) ${filter.value}`;
+    ctx.drawImage(
+      originalImage,
+      -originalImage.width / 2,
+      -originalImage.height / 2
+    );
+    ctx.restore();
+    ctx.filter = "none";
+  }
+
+  input.addEventListener("change", () => {
+    const file = input.files && input.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      status.textContent = "Please choose an image file.";
+      input.value = "";
+      return;
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      status.textContent = "Please choose an image smaller than 8 MB.";
+      input.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const image = new Image();
+      image.onload = () => {
+        originalImage = image;
+        rotation = 0;
+        brightness.value = 100;
+        contrast.value = 100;
+        filter.value = "none";
+        drawPhoto();
+        status.textContent = "Photo loaded! You can now edit it.";
+      };
+      image.onerror = () => {
+        status.textContent = "Could not open this image. Try another photo.";
+      };
+      image.src = reader.result;
+    };
+
+    reader.onerror = () => {
+      status.textContent = "Could not read this file. Please try again.";
+    };
+
+    reader.readAsDataURL(file);
+  });
+
+  brightness.addEventListener("input", drawPhoto);
+  contrast.addEventListener("input", drawPhoto);
+  filter.addEventListener("change", drawPhoto);
+
+  document.getElementById("photoRotate").addEventListener("click", () => {
+    if (!originalImage) {
+      status.textContent = "Upload a photo first.";
+      return;
+    }
+    rotation = (rotation + 90) % 360;
+    drawPhoto();
+  });
+
+  document.getElementById("photoReset").addEventListener("click", () => {
+    if (!originalImage) {
+      status.textContent = "Upload a photo first.";
+      return;
+    }
+    rotation = 0;
+    brightness.value = 100;
+    contrast.value = 100;
+    filter.value = "none";
+    drawPhoto();
+    status.textContent = "Edits reset.";
+  });
+
+  document.getElementById("photoDownload").addEventListener("click", () => {
+    if (!originalImage) {
+      status.textContent = "Upload a photo first.";
+      return;
+    }
+
+    canvas.toBlob(blob => {
+      if (!blob) {
+        status.textContent = "Could not download the photo. Try again.";
+        return;
+      }
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "smart-ai-edited-photo.png";
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      status.textContent = "Your edited photo is ready to download.";
+    }, "image/png");
+  });
+})();
+</script>
+<!-- END SMART AI PHOTO EDITOR -->
 </body>
+
 </html>
