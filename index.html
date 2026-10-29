@@ -175,6 +175,45 @@ textarea{resize:vertical;min-height:55px;max-height:180px}
       </div>
     </header>
 
+    
+<section id="plusPanel" style="padding:12px 16px;border-bottom:1px solid var(--line);">
+  <div style="max-width:820px;margin:auto;">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+      <strong class="plus-title" style="font-size:20px;">SMART AI PLUS</strong>
+      <span class="plus-badge">✦ PLUS</span>
+    </div>
+    <div class="muted" style="margin-bottom:12px;">
+      Your creative AI workspace
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;">
+      <button type="button" class="plus-feature"
+        onclick="document.getElementById('prompt').focus()">
+        💬 AI Chat
+      </button>
+      <button type="button" class="plus-feature"
+        onclick="document.getElementById('uploadBtn').click()">
+        🖼️ Upload Photo
+      </button>
+      <button type="button" class="plus-feature"
+        onclick="document.getElementById('prompt').value='A cinematic, high-quality image of a futuristic AI robot';document.getElementById('prompt').focus()">
+        🎨 AI Image Prompt
+      </button>
+      <button type="button" class="plus-feature"
+        onclick="document.getElementById('prompt').value='Write a beginner-friendly JavaScript program';document.getElementById('prompt').focus()">
+        💻 Coding Assistant
+      </button>
+      <button type="button" class="plus-feature"
+        onclick="document.getElementById('voiceBtn').click()">
+        🎙️ Voice Input
+      </button>
+      <button type="button" class="plus-feature"
+        onclick="alert('Photo-to-video backend setup is still required. Video generation may have a separate charge.')">
+        🎬 Photo to Video
+      </button>
+    </div>
+  </div>
+</section>
+
     <section class="messages" id="messages">
       <div class="welcome">
         <h1>What can I help with?</h1>
