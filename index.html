@@ -350,6 +350,7 @@ if (selectedImage) {
   $("prompt").value="";
   addMessage("user",text,selectedImage?.data||null);
   selectedImage=null;
+
   showPreview();
   $("status").textContent="Thinking…";
   $("sendBtn").disabled=true;
@@ -360,7 +361,7 @@ if (selectedImage) {
       headers:{"Content-Type":"application/json"},
      body:JSON.stringify({
   message: text,
-  image: selectedImage || null
+ image: selectedImage?.data || null
 })
     });
 
