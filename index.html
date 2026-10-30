@@ -350,20 +350,59 @@ function newChat(){
   $("prompt").focus();
 }
 
-function renderHistory(){
-  const host=$("history");
+
+function renderHistory() {
+  const host = $("history");
   host.replaceChildren();
-  chats.forEach(c=>{
-    const b=document.createElement("button");
-    b.textContent=c.title||"New chat";
-    b.className=c.id===currentId?"active":"";
-    b.onclick=()=>{
-      currentId=c.id;
+
+  chats.forEach(c => {
+    const row = document.createElement("div");
+    row.style.cssText =
+      "display:flex;align-items:center;gap:5px;width:100%;";
+
+    // Open chat button
+    const b = document.createElement("button");
+    b.textContent = c.title || "New chat";
+    b.className = c.id === currentId ? "active" : "";
+    b.style.cssText =
+      "flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;";
+
+    b.onclick = () => {
+      currentId = c.id;
       renderHistory();
       renderMessages();
       $("sidebar").classList.remove("open");
     };
-    host.appendChild(b);
+
+    // Delete chat button
+    const del = document.createElement("button");
+    del.textContent = "🗑️";
+    del.title = "Delete chat";
+    del.setAttribute("aria-label", "Delete chat");
+    del.style.cssText =
+      "flex-shrink:0;padding:8px;cursor:pointer;";
+
+    del.onclick = () => {
+      const confirmed = confirm(
+        "Kya tum ye chat permanently delete karna chahte ho?"
+      );
+
+      if (!confirmed) return;
+
+      chats = chats.filter(chat => chat.id !== c.id);
+
+      if (currentId === c.id) {
+        currentId = chats.length ? chats[0].id : null;
+      }
+
+      saveChatHistory();
+      renderHistory();
+      renderMessages();
+    };
+
+    row.appendChild(b);
+    row.appendChild(del);
+    host.appendChild(row);
   });
 }
 
