@@ -382,26 +382,24 @@ function renderHistory() {
     del.style.cssText =
       "flex-shrink:0;padding:8px;cursor:pointer;";
 
-    del.onclick = () => {
-      const confirmed = confirm(
-        "Kya tum ye chat permanently delete karna chahte ho?"
-      );
+   
+del.onclick = () => {
+  const confirmed = confirm(
+    "Kya tum ye chat permanently delete karna chahte ho?"
+  );
 
-      if (!confirmed) return;
+  if (!confirmed) return;
 
-      
-chats = chats.filter(chat => chat.id !== c.id);
+  chats = chats.filter(chat => chat.id !== c.id);
 
-if (currentId === c.id) {
-  currentId = chats.length ? chats[0].id : null;
-}
+  if (currentId === c.id) {
+    currentId = chats.length ? chats[0].id : null;
+  }
 
-localStorage.setItem(HISTORY_KEY, JSON.stringify(chats));
+  saveChats();
+  renderMessages();
+};
 
-renderHistory();
-renderMessages();
-
-    };
 
     row.appendChild(b);
     row.appendChild(del);
