@@ -389,15 +389,18 @@ function renderHistory() {
 
       if (!confirmed) return;
 
-      chats = chats.filter(chat => chat.id !== c.id);
+      
+chats = chats.filter(chat => chat.id !== c.id);
 
-      if (currentId === c.id) {
-        currentId = chats.length ? chats[0].id : null;
-      }
+if (currentId === c.id) {
+  currentId = chats.length ? chats[0].id : null;
+}
 
-      saveChatHistory();
-      renderHistory();
-      renderMessages();
+localStorage.setItem(HISTORY_KEY, JSON.stringify(chats));
+
+renderHistory();
+renderMessages();
+
     };
 
     row.appendChild(b);
