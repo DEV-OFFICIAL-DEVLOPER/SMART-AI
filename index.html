@@ -84,6 +84,33 @@ textarea{resize:vertical;min-height:55px;max-height:180px}
 @keyframes image-spin{to{transform:rotate(360deg)}}
 @keyframes image-shine{0%{background-position:120% 0}100%{background-position:-120% 0}}
 @media(prefers-reduced-motion:reduce){.image-spinner,.image-shimmer{animation:none}}
+
+/* SMART AI Thinking Star */
+.smart-thinking {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  align-self: flex-start;
+}
+
+.smart-star {
+  font-size: 32px;
+  color: #a78bfa;
+  display: inline-block;
+  animation: smartSpin 2s linear infinite,
+             smartGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes smartSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes smartGlow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
 </style>
 
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
