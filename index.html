@@ -549,6 +549,7 @@ if (selectedImage) {
 
   showPreview();
   $("status").textContent="Thinking…";
+    showThinkingStar();
   $("sendBtn").disabled=true;
 
   try{
@@ -570,7 +571,13 @@ if (selectedImage) {
   }catch(error){
     addMessage("assistant","Connection error. Please check your internet and Cloudflare Worker. Details: "+error.message);
     $("status").textContent="Connection issue";
-  }finally{
+  
+} finally {
+  hideThinkingStar();
+  $("sendBtn").disabled = false;
+  $("prompt").focus();
+}
+
     $("sendBtn").disabled=false;
     $("prompt").focus();
   }
