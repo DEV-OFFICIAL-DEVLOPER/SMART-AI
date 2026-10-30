@@ -144,7 +144,7 @@ textarea{resize:vertical;min-height:55px;max-height:180px}
     
 <div style="padding:10px;">
   <button type="button"
-    onclick="alert('SMART AI PLUS: ₹50 for 7 days. Payment coming soon!')"
+    onclick="document.getElementById('smartPlusDialog').showModal()"
     style="width:100%;padding:12px;border-radius:12px;border:1px solid #8b5cf6;background:linear-gradient(120deg,#2563eb,#9333ea);color:white;font-weight:700;cursor:pointer;">
     ✦ SMART AI PLUS — ₹50 / 7 Days
   </button>
@@ -981,5 +981,52 @@ if(!chats.length){
 </script>
 <!-- END SMART AI PHOTO EDITOR -->
 </body>
+  
+<!-- SMART AI PLUS POPUP -->
+<dialog id="smartPlusDialog" style="
+  width:min(390px,calc(100% - 32px));
+  max-height:85vh;
+  overflow:auto;
+  margin:auto;
+  padding:24px;
+  border:1px solid #8b5cf6;
+  border-radius:20px;
+  background:#171923;
+  color:white;
+  box-shadow:0 20px 60px #0008;
+">
+  <button type="button" onclick="document.getElementById('smartPlusDialog').close()"
+    style="float:right;background:none;border:0;color:white;font-size:24px;cursor:pointer"
+    aria-label="Close">×</button>
+
+  <h2 style="color:#c4b5fd;margin:0 0 12px">✦ SMART AI PLUS</h2>
+  <p>Unlock your creative AI workspace</p>
+
+  <div style="font-size:36px;font-weight:800;margin:20px 0">
+    ₹50 <span style="font-size:15px;font-weight:400">/ 7 Days</span>
+  </div>
+
+  <p>✓ AI Chat</p>
+  <p>✓ Image Tools</p>
+  <p>✓ Voice Features</p>
+  <p>✓ Coding Assistant</p>
+
+  <button type="button"
+    onclick="alert('Secure payment is coming soon. No payment has been taken.')"
+    style="width:100%;padding:14px;margin-top:16px;border:0;border-radius:12px;background:linear-gradient(120deg,#2563eb,#9333ea);color:white;font-weight:700;cursor:pointer">
+    Upgrade for ₹50
+  </button>
+
+  <p style="font-size:12px;color:#a1a1aa;text-align:center;margin-top:14px">
+    Payment not active yet. No charges will be made.
+  </p>
+</dialog>
+
+<style>
+#smartPlusDialog::backdrop {
+  background:rgba(0,0,0,.7);
+}
+</style>
+
 
 </html>
