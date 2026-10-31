@@ -518,7 +518,6 @@ function hideThinkingStar() {
   async function sendMessage(){
  let text = $("prompt").value.trim();
   if(!text&&!selectedImage)return;
-
  
 if (selectedImage) {
   const imageData = selectedImage;
@@ -565,10 +564,6 @@ if (selectedImage) {
   hideThinkingStar();
   $("sendBtn").disabled = false;
   $("prompt").focus();
-}
-
-    $("sendBtn").disabled=false;
-    $("prompt").focus();
   }
 }
 
